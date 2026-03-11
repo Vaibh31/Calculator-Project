@@ -32,7 +32,7 @@ calculator/
 
 ## 📸 Preview
 
-![Calculator Screenshot] calculator.png
+ calculator.png
 
 ## 🌐 Live Demo
 
