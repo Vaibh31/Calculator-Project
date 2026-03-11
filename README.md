@@ -25,13 +25,15 @@ You can view the live project here:
 - CSS3
 - JavaScript 
 
-## 📂 Project Structure
+## 📁 Project Structure
+
+```
 calculator/
 │
-
 ├── index.html
 ├── script.js
 └── README.md
+```
 
 ## 📸 Preview
 
