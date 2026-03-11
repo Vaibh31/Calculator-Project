@@ -36,4 +36,4 @@ calculator/
 ## 🌐 Live Demo
 
 You can view the live project here:  
-(After enabling GitHub Pages)
+(https://vaibh31.github.io/Calculator-Project/)
