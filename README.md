@@ -20,18 +20,19 @@ This project performs basic arithmetic operations and demonstrates fundamental f
 
 - HTML5
 - CSS3
-- JavaScript (Vanilla JS)
+- JavaScript 
 
 ## 📂 Project Structure
 calculator/
 │
+
 ├── index.html
 ├── script.js
 └── README.md
 
 ## 📸 Preview
 
-calculator.png
+![Calculator Screenshot] calculator.png
 
 ## 🌐 Live Demo
 
