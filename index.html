@@ -1,86 +1,527 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculator</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: "Segoe UI", sans-serif;
-      display: flex; justify-content: center; align-items: center;
-      min-height: 100vh; background: #F1F5F9;
-    }
-    .calculator {
-      width: 320px; background: #1E293B;
-      border-radius: 20px; padding: 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    }
-    .display {
-      background: #0F172A; border-radius: 12px;
-      padding: 20px; margin-bottom: 16px; text-align: right;
-      min-height: 90px; display: flex; flex-direction: column;
-      justify-content: flex-end;
-    }
-    #previous {
-      font-size: 0.9rem; color: #64748B; min-height: 1.2em;
-    }
-    #current {
-      font-size: 2.5rem; color: white; font-weight: 700;
-      word-break: break-all;
-    }
-    .buttons {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
-    button {
-      padding: 18px; font-size: 1.3rem; font-weight: 600;
-      border: none; border-radius: 12px; cursor: pointer;
-      transition: transform 0.1s, background 0.2s;
-    }
-    button:active { transform: scale(0.93); }
-    .num    { background: #334155; color: white; }
-    .num:hover { background: #475569; }
-    .op     { background: #3B82F6; color: white; }
-    .op:hover { background: #2563EB; }
-    .equals { background: #16A34A; color: white; grid-column: span 2; }
-    .equals:hover { background: #15803D; }
-    .clear  { background: #DC2626; color: white; }
-    .clear:hover { background: #B91C1C; }
-    .delete { background: #F59E0B; color: white; }
-    .delete:hover { background: #D97706; }
-    .zero   { grid-column: span 2; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --transition-speed: .45s;
+  }
+
+  /* ===================== THEME: MIDNIGHT (default) ===================== */
+  [data-theme="midnight"]{
+    --bg-1: #05060a;
+    --bg-2: #0c0f1a;
+    --panel: #11141f;
+    --panel-glass: rgba(255,255,255,.03);
+    --panel-border: rgba(255,255,255,.06);
+    --display-bg: #07080d;
+    --ink-strong: #eef1fb;
+    --ink-soft: #6b7290;
+    --accent: #7c9eff;
+    --accent-soft: rgba(124,158,255,.16);
+    --op-bg: rgba(124,158,255,.10);
+    --op-ink: #aebdff;
+    --equals-1: #7c9eff;
+    --equals-2: #5a7bf0;
+    --equals-ink: #060812;
+    --danger: #ff6b7a;
+    --danger-soft: rgba(255,107,122,.12);
+    --num-bg: rgba(255,255,255,.025);
+    --num-bg-hover: rgba(255,255,255,.055);
+    --shadow: 0 30px 80px rgba(0,0,0,.55), 0 2px 0 rgba(255,255,255,.04) inset;
+    --glow: 0 0 40px rgba(124,158,255,.25);
+    --caret: #7c9eff;
+    --font-display: 'JetBrains Mono', monospace;
+    --font-ui: 'Space Grotesk', sans-serif;
+    --radius: 22px;
+  }
+
+  /* ===================== THEME: OCEAN ===================== */
+  [data-theme="rose"]{
+    --bg-1: #060a0e;
+    --bg-2: #0a1520;
+    --panel: #0d1822;
+    --panel-glass: rgba(56,189,248,.04);
+    --panel-border: rgba(56,189,248,.10);
+    --display-bg: #080c12;
+    --ink-strong: #e0f2fe;
+    --ink-soft: #4a7a9b;
+    --accent: #38bdf8;
+    --accent-soft: rgba(56,189,248,.16);
+    --op-bg: rgba(56,189,248,.10);
+    --op-ink: #7dd3fc;
+    --equals-1: #0ea5e9;
+    --equals-2: #0369a1;
+    --equals-ink: #060a0e;
+    --danger: #f87171;
+    --danger-soft: rgba(248,113,113,.12);
+    --num-bg: rgba(56,189,248,.03);
+    --num-bg-hover: rgba(56,189,248,.08);
+    --shadow: 0 30px 80px rgba(0,10,30,.6), 0 2px 0 rgba(56,189,248,.05) inset;
+    --glow: 0 0 40px rgba(56,189,248,.22);
+    --caret: #38bdf8;
+    --font-display: 'JetBrains Mono', monospace;
+    --font-ui: 'Space Grotesk', sans-serif;
+    --radius: 16px;
+  }
+
+  /* ===================== THEME: VIOLET ===================== */
+  [data-theme="terminal"]{
+    --bg-1: #0c0815;
+    --bg-2: #160f28;
+    --panel: #1a1230;
+    --panel-glass: rgba(196,163,255,.04);
+    --panel-border: rgba(196,163,255,.16);
+    --display-bg: #100a1d;
+    --ink-strong: #ece4ff;
+    --ink-soft: #8b7bb0;
+    --accent: #b388ff;
+    --accent-soft: rgba(179,136,255,.16);
+    --op-bg: rgba(179,136,255,.10);
+    --op-ink: #cdb4ff;
+    --equals-1: #b388ff;
+    --equals-2: #7c4dff;
+    --equals-ink: #100a1d;
+    --danger: #ff6b9d;
+    --danger-soft: rgba(255,107,157,.12);
+    --num-bg: rgba(179,136,255,.04);
+    --num-bg-hover: rgba(179,136,255,.09);
+    --shadow: 0 30px 80px rgba(0,0,0,.55), 0 2px 0 rgba(255,255,255,.04) inset;
+    --glow: 0 0 40px rgba(179,136,255,.3);
+    --caret: #b388ff;
+    --font-display: 'JetBrains Mono', monospace;
+    --font-ui: 'Space Grotesk', sans-serif;
+    --radius: 18px;
+  }
+
+  /* ===================== THEME: SUNSET ===================== */
+  [data-theme="sunset"]{
+    --bg-1: #1a0f1f;
+    --bg-2: #2c1330;
+    --panel: #2a1530;
+    --panel-glass: rgba(255,255,255,.04);
+    --panel-border: rgba(255,170,150,.14);
+    --display-bg: #1c0f22;
+    --ink-strong: #fff1ea;
+    --ink-soft: #b58aa3;
+    --accent: #ff8a65;
+    --accent-soft: rgba(255,138,101,.16);
+    --op-bg: rgba(255,138,101,.10);
+    --op-ink: #ffb199;
+    --equals-1: #ff7a59;
+    --equals-2: #ff4d8d;
+    --equals-ink: #1c0f1a;
+    --danger: #ff6090;
+    --danger-soft: rgba(255,96,144,.12);
+    --num-bg: rgba(255,255,255,.035);
+    --num-bg-hover: rgba(255,255,255,.07);
+    --shadow: 0 30px 80px rgba(50,10,40,.5), 0 2px 0 rgba(255,255,255,.05) inset;
+    --glow: 0 0 45px rgba(255,122,89,.3);
+    --caret: #ff8a65;
+    --font-display: 'JetBrains Mono', monospace;
+    --font-ui: 'Space Grotesk', sans-serif;
+    --radius: 26px;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  body{
+    font-family: var(--font-ui);
+    min-height:100vh;
+    display:flex; justify-content:center; align-items:center;
+    background: radial-gradient(120% 120% at 50% 0%, var(--bg-2), var(--bg-1));
+    transition: background var(--transition-speed) ease;
+    overflow:hidden;
+    position:relative;
+  }
+
+  /* ambient backdrop blobs */
+  .ambient{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    opacity:.55; transition: opacity var(--transition-speed) ease;
+  }
+  .ambient span{
+    position:absolute; border-radius:50%;
+    filter: blur(70px);
+    background: var(--accent);
+    opacity:.18;
+    transition: background var(--transition-speed) ease;
+    animation: drift 18s ease-in-out infinite;
+  }
+  .ambient span:nth-child(1){ width:380px; height:380px; top:-120px; left:-100px; }
+  .ambient span:nth-child(2){ width:300px; height:300px; bottom:-100px; right:-80px; animation-delay:-6s; animation-direction:reverse; }
+  [data-theme="terminal"] .ambient{ opacity:.45; }
+  [data-theme="paper"] .ambient{ opacity:.12; }
+
+  @keyframes drift{
+    0%,100%{ transform: translate(0,0) scale(1); }
+    50%{ transform: translate(40px,-30px) scale(1.15); }
+  }
+
+  .scene{
+    position:relative; z-index:1;
+    display:flex; flex-direction:column; align-items:center; gap:18px;
+  }
+
+  /* ===================== THEME SWITCHER ===================== */
+  .theme-switch{
+    display:flex; gap:10px;
+    background: var(--panel-glass);
+    border:1px solid var(--panel-border);
+    padding:7px;
+    border-radius: 999px;
+    backdrop-filter: blur(14px);
+    transition: background var(--transition-speed) ease, border-color var(--transition-speed) ease;
+  }
+  .theme-dot{
+    width:30px; height:30px; border-radius:50%;
+    border: 2px solid transparent;
+    cursor:pointer;
+    position:relative;
+    display:flex; align-items:center; justify-content:center;
+    transition: transform .25s cubic-bezier(.34,1.56,.64,1), border-color .25s ease;
+    background:none;
+  }
+  .theme-dot:hover{ transform: translateY(-2px) scale(1.08); }
+  .theme-dot.active{ border-color: var(--swatch-ring, #fff); }
+  .theme-dot .swatch{
+    width:18px; height:18px; border-radius:50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+  }
+  .theme-dot[data-t="midnight"] .swatch{ background: linear-gradient(135deg,#0c0f1a,#7c9eff); }
+  .theme-dot[data-t="rose"] .swatch{ background: linear-gradient(135deg,#0a1520,#38bdf8); }
+  .theme-dot[data-t="terminal"] .swatch{ background: linear-gradient(135deg,#160f28,#b388ff); }
+  .theme-dot[data-t="sunset"] .swatch{ background: linear-gradient(135deg,#2c1330,#ff7a59); }
+  .theme-dot[data-t="midnight"].active{ border-color:#7c9eff; }
+  .theme-dot[data-t="rose"].active{ border-color:#38bdf8; }
+  .theme-dot[data-t="terminal"].active{ border-color:#b388ff; }
+  .theme-dot[data-t="sunset"].active{ border-color:#ff7a59; }
+
+  /* ===================== CALCULATOR ===================== */
+  .calculator{
+    width: 300px;
+    background: linear-gradient(165deg, var(--panel), var(--panel) 60%, var(--bg-1));
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow), var(--glow);
+    transition: background var(--transition-speed) ease,
+                border-color var(--transition-speed) ease,
+                box-shadow var(--transition-speed) ease,
+                border-radius var(--transition-speed) ease;
+    position:relative;
+  }
+
+  .display{
+    background: var(--display-bg);
+    border-radius: calc(var(--radius) - 8px);
+    padding: 16px 16px 14px;
+    margin-bottom: 14px;
+    min-height: 90px;
+    display:flex; flex-direction:column; justify-content:flex-end;
+    position:relative;
+    overflow:hidden;
+    border: 1px solid var(--panel-border);
+    transition: background var(--transition-speed) ease, border-radius var(--transition-speed) ease, border-color var(--transition-speed) ease;
+  }
+
+  #previous{
+    font-family: var(--font-display);
+    font-size: .85rem;
+    color: var(--ink-soft);
+    min-height: 1.3em;
+    letter-spacing:.02em;
+    transition: color var(--transition-speed) ease;
+  }
+
+  #previous .op-pill{
+    display:inline-block;
+    background: var(--op-bg);
+    color: var(--op-ink);
+    padding: 1px 8px;
+    border-radius: 999px;
+    margin-left:6px;
+    font-weight:600;
+    transition: background var(--transition-speed) ease, color var(--transition-speed) ease;
+  }
+
+  #current{
+    font-family: var(--font-display);
+    font-size: 2.1rem;
+    font-weight: 600;
+    color: var(--ink-strong);
+    word-break: break-all;
+    line-height:1.1;
+    transition: color var(--transition-speed) ease;
+  }
+
+  #current.pulse{ animation: pulse-in .22s ease; }
+  @keyframes pulse-in{
+    0%{ transform: scale(.94); opacity:.4; }
+    100%{ transform: scale(1); opacity:1; }
+  }
+
+  #current.error{ color: var(--danger); animation: shake .35s ease; }
+  @keyframes shake{
+    0%,100%{ transform: translateX(0); }
+    25%{ transform: translateX(-6px); }
+    75%{ transform: translateX(6px); }
+  }
+
+  .buttons{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 7px;
+  }
+
+  /* Scientific buttons row — smaller font, distinct tint */
+  .sci{
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-family: var(--font-display);
+    font-size: .82rem;
+    font-weight: 600;
+    letter-spacing: .02em;
+  }
+  .sci:hover{ background: var(--op-bg); color: var(--op-ink); }
+  .sci.active-flash{ background: var(--accent); color: var(--equals-ink); }
+
+  button{
+    padding: 14px 0;
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: calc(var(--radius) - 10px);
+    cursor: pointer;
+    color: var(--ink-strong);
+    background: var(--num-bg);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    transition: background .18s ease, color var(--transition-speed) ease,
+                border-radius var(--transition-speed) ease, transform .08s ease;
+  }
+  button:hover{ background: var(--num-bg-hover); }
+  .equals:hover{ background: linear-gradient(135deg, var(--equals-1), var(--equals-2)); filter: brightness(2.0); transform: scale(1.03); box-shadow: 0 12px 40px var(--accent-soft); }
+  button:active{ transform: scale(.93); }
+
+  /* ripple */
+  button .ripple{
+    position:absolute;
+    border-radius:50%;
+    background: rgba(255,255,255,.35);
+    transform: scale(0);
+    opacity:.6;
+    pointer-events:none;
+    z-index:0;
+  }
+  button .ripple.go{
+    animation: ripple-anim .5s ease-out forwards;
+  }
+  @keyframes ripple-anim{
+    to{ transform: scale(3.2); opacity:0; }
+  }
+  button span.label{ position:relative; z-index:1; }
+
+  .op{ background: var(--op-bg); color: var(--op-ink); font-family: var(--font-display); }
+  .op:hover{ background: var(--accent-soft); }
+
+  .equals{
+    background: linear-gradient(135deg, var(--equals-1), var(--equals-2));
+    color: var(--equals-ink);
+    grid-column: span 1;
+    font-family: var(--font-display);
+    box-shadow: 0 8px 24px var(--accent-soft);
+    transition: background .18s ease, box-shadow .18s ease, transform .08s ease, filter .18s ease;
+  }
+  .equals:hover{
+    filter: brightness(2.0);
+    transform: scale(1.03);
+    box-shadow: 0 12px 40px var(--accent-soft);
+    opacity: 1;
+  }
+
+  .clear{ background: var(--danger-soft); color: var(--danger); }
+  .clear:hover{ background: var(--danger-soft); filter: brightness(1.3); }
+
+  .delete{ background: var(--num-bg); color: var(--ink-soft); }
+
+  .zero{ grid-column: span 2; }
+
+  .footer-tag{
+    font-family: var(--font-display);
+    font-size: .68rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color: var(--ink-soft);
+    opacity:.55;
+    text-align:center;
+    transition: color var(--transition-speed) ease;
+  }
+
+  /* ===================== HISTORY PANEL ===================== */
+  .history-btn{
+    position:absolute; top:14px; right:16px;
+    background: var(--panel-glass);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-family: var(--font-ui);
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color: var(--ink-soft);
+    cursor:pointer;
+    transition: background .18s, color .18s;
+    z-index:2;
+  }
+  .history-btn:hover{ background: var(--accent-soft); color: var(--accent); }
+  .history-btn:active{ transform: scale(.95); }
+
+  .history-panel{
+    position:absolute;
+    top:0; left:0; right:0; bottom:0;
+    background: var(--display-bg);
+    border-radius: calc(var(--radius) - 8px);
+    border: 1px solid var(--panel-border);
+    padding: 14px 16px 14px;
+    display:flex; flex-direction:column; gap:10px;
+    opacity:0; pointer-events:none;
+    transform: translateY(6px);
+    transition: opacity .22s ease, transform .22s ease;
+    z-index:10;
+  }
+  .history-panel.open{ opacity:1; pointer-events:all; transform:translateY(0); }
+  .history-header{
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .history-title{
+    font-family: var(--font-ui);
+    font-size:.72rem; font-weight:700;
+    letter-spacing:.1em; text-transform:uppercase;
+    color: var(--ink-soft);
+  }
+  .history-actions{ display:flex; gap:8px; }
+  .h-close, .h-clear{
+    background:none; border:none; cursor:pointer; padding:3px 7px;
+    font-size:.7rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
+    border-radius:6px;
+    transition: background .15s, color .15s;
+  }
+  .h-close{ color: var(--ink-soft); }
+  .h-close:hover{ background: var(--num-bg-hover); color: var(--ink-strong); }
+  .h-clear{ color: var(--danger); background: var(--danger-soft); }
+  .h-clear:hover{ filter:brightness(1.2); }
+  .h-clear:active,.h-close:active{ transform:scale(.92); }
+
+  .history-list{
+    flex:1; overflow-y:auto; display:flex; flex-direction:column-reverse; gap:6px;
+    padding-right:2px;
+  }
+  .history-list::-webkit-scrollbar{ width:4px; }
+  .history-list::-webkit-scrollbar-thumb{ background: var(--panel-border); border-radius:4px; }
+
+  .h-item{
+    display:flex; flex-direction:column; align-items:flex-end;
+    padding: 8px 10px;
+    background: var(--num-bg);
+    border-radius: 8px;
+    cursor:pointer;
+    transition: background .15s;
+  }
+  .h-item:hover{ background: var(--accent-soft); }
+  .h-expr{
+    font-family: var(--font-display);
+    font-size:.75rem; color: var(--ink-soft); letter-spacing:.02em;
+  }
+  .h-result{
+    font-family: var(--font-display);
+    font-size:1.05rem; font-weight:600; color: var(--ink-strong);
+  }
+  .h-empty{
+    font-family: var(--font-display);
+    font-size:.8rem; color: var(--ink-soft);
+    text-align:center; margin-top:auto; margin-bottom:auto; padding:20px 0;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
+  }
+</style>
 </head>
-<body>
-  <div class="calculator">
-    <div class="display">
-      <div id="previous"></div>
-      <div id="current">0</div>
+<body data-theme="midnight">
+
+  <div class="ambient"><span></span><span></span></div>
+
+  <div class="scene">
+    <div class="theme-switch" role="group" aria-label="Choose theme">
+      <button class="theme-dot active" data-t="midnight" title="Midnight" aria-label="Midnight theme"><span class="swatch"></span></button>
+      <button class="theme-dot" data-t="rose" title="Ocean" aria-label="Ocean theme"><span class="swatch"></span></button>
+      <button class="theme-dot" data-t="terminal" title="Terminal" aria-label="Terminal theme"><span class="swatch"></span></button>
+      <button class="theme-dot" data-t="sunset" title="Sunset" aria-label="Sunset theme"><span class="swatch"></span></button>
     </div>
-    <div class="buttons">
-      <button class="clear">AC</button>
-      <button class="delete">DEL</button>
-      <button class="op" data-op="%">%</button>
-      <button class="op" data-op="/">÷</button>
-      <button class="num" data-num="7">7</button>
-      <button class="num" data-num="8">8</button>
-      <button class="num" data-num="9">9</button>
-      <button class="op" data-op="*">×</button>
-      <button class="num" data-num="4">4</button>
-      <button class="num" data-num="5">5</button>
-      <button class="num" data-num="6">6</button>
-      <button class="op" data-op="-">−</button>
-      <button class="num" data-num="1">1</button>
-      <button class="num" data-num="2">2</button>
-      <button class="num" data-num="3">3</button>
-      <button class="op" data-op="+">+</button>
-      <button class="num zero" data-num="0">0</button>
-      <button class="num" data-num=".">.</button>
-      <button class="equals">=</button>
+
+    <div class="calculator">
+      <div class="display">
+        <button class="history-btn" id="historyToggle">History</button>
+        <div class="history-panel" id="historyPanel">
+          <div class="history-header">
+            <span class="history-title">History</span>
+            <div class="history-actions">
+              <button class="h-clear" id="clearHistory">Clear</button>
+              <button class="h-close" id="closeHistory">✕</button>
+            </div>
+          </div>
+          <div class="history-list" id="historyList">
+            <div class="h-empty" id="historyEmpty">No calculations yet</div>
+          </div>
+        </div>
+        <div id="previous"></div>
+        <div id="current">0</div>
+      </div>
+      <div class="buttons">
+        <!-- Scientific row -->
+        <button class="sci" data-sci="sin"><span class="label">sin</span></button>
+        <button class="sci" data-sci="cos"><span class="label">cos</span></button>
+        <button class="sci" data-sci="tan"><span class="label">tan</span></button>
+        <button class="sci" data-sci="sqrt"><span class="label">√</span></button>
+        <button class="sci" data-sci="square"><span class="label">x²</span></button>
+        <button class="sci" data-sci="inv"><span class="label">1/x</span></button>
+        <button class="sci" data-sci="log"><span class="label">log</span></button>
+        <button class="sci" data-sci="ln"><span class="label">ln</span></button>
+        <!-- Standard rows -->
+        <button class="clear"><span class="label">AC</span></button>
+        <button class="delete"><span class="label">DEL</span></button>
+        <button class="op" data-op="%"><span class="label">%</span></button>
+        <button class="op" data-op="/"><span class="label">÷</span></button>
+        <button class="num" data-num="7"><span class="label">7</span></button>
+        <button class="num" data-num="8"><span class="label">8</span></button>
+        <button class="num" data-num="9"><span class="label">9</span></button>
+        <button class="op" data-op="*"><span class="label">×</span></button>
+        <button class="num" data-num="4"><span class="label">4</span></button>
+        <button class="num" data-num="5"><span class="label">5</span></button>
+        <button class="num" data-num="6"><span class="label">6</span></button>
+        <button class="op" data-op="-"><span class="label">−</span></button>
+        <button class="num" data-num="1"><span class="label">1</span></button>
+        <button class="num" data-num="2"><span class="label">2</span></button>
+        <button class="num" data-num="3"><span class="label">3</span></button>
+        <button class="op" data-op="+"><span class="label">+</span></button>
+        <button class="num" data-num="0"><span class="label">0</span></button>
+        <button class="sci" data-sci="pi"><span class="label">π</span></button>
+        <button class="num" data-num="."><span class="label">.</span></button>
+        <button class="equals"><span class="label">=</span></button>
+      </div>
     </div>
+
+    <div class="footer-tag">scientific calculator</div>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
